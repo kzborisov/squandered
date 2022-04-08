@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Welcome to Squandered</h1>
+
+    {% if user.is_authenticated %}
+        <p>It's good to see you back, {{ user.profile.first_name }}</p>
+    {% else %}
+        <p>You should go register <a href="{% url 'profile register' %}">Click!</a></p>
+    {% endif %}
+{% endblock %}

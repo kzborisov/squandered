@@ -63,6 +63,7 @@ class Profile(models.Model):
         CustomUser,
         on_delete=models.CASCADE,
         primary_key=True,
+        related_name='profile',
     )
 
     def __str__(self):
