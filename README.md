@@ -1,0 +1,2 @@
+# squandered
+Money management tool
