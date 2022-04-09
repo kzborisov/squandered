@@ -1,11 +1,24 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Welcome to Squandered</h1>
+    <div class="jumbotron jumbotron-fluid mt-5" style="height: 50vh;">
+        <div class="position-sticky d-flex flex-column align-items-center">
+            <h1 class="display-4">Welcome to Squandered</h1>
 
-    {% if user.is_authenticated %}
-        <p>It's good to see you back, {{ user.profile.first_name }}</p>
-    {% else %}
-        <p>You should go register <a href="{% url 'profile register' %}">Click!</a></p>
-    {% endif %}
+            {% if user.is_authenticated %}
+                <p class="lead">It's good to see you back, {{ user.profile.first_name }}</p>
+                <a class="btn btn-secondary" href="#" role="button">Add Transaction</a>
+            {% else %}
+                <p class="lead">You should login or register</p>
+                <div class="flex-box flex-row justify-content-center">
+                    <a class="btn btn-secondary mr-1" href="{% url 'profile register' %}" role="button"> Register</a>
+                    <a class="btn btn-secondary" href="{% url 'profile login' %}" role="button">Log In</a>
+                </div>
+
+            {% endif %}
+        </div>
+
+
+    </div>
+
 {% endblock %}
