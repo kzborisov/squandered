@@ -21,6 +21,7 @@ INSTALLED_APPS = [
 
     'squandered.account',
     'squandered.main',
+    'squandered.transaction',
 ]
 
 MIDDLEWARE = [
@@ -83,7 +84,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TODO: Add to .env
+TIME_ZONE = 'Europe/Sofia'
 
 USE_I18N = True
 

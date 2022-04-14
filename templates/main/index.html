@@ -1,24 +1,146 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="jumbotron jumbotron-fluid mt-5" style="height: 50vh;">
+    <div class="jumbotron jumbotron-fluid my-5">
         <div class="position-sticky d-flex flex-column align-items-center">
-            <h1 class="display-4">Welcome to Squandered</h1>
-
+            <h1 class="display-xs">Welcome to Squandered</h1>
             {% if user.is_authenticated %}
                 <p class="lead">It's good to see you back, {{ user.profile.first_name }}</p>
-                <a class="btn btn-secondary" href="#" role="button">Add Transaction</a>
-            {% else %}
-                <p class="lead">You should login or register</p>
                 <div class="flex-box flex-row justify-content-center">
-                    <a class="btn btn-secondary mr-1" href="{% url 'profile register' %}" role="button"> Register</a>
-                    <a class="btn btn-secondary" href="{% url 'profile login' %}" role="button">Log In</a>
+                    <a class="btn btn-secondary mr-3" href="{% url 'add expense' %}" role="button">Add Expense</a>
+                    <a class="btn btn-secondary mr-3" href="{% url 'add income' %}">Add Income</a>
                 </div>
-
+            {% else %}
+                <p class="lead">You should log in or register to use Squandered</p>
+                <div class="flex-box flex-row justify-content-center">
+                    <a class="btn btn-secondary mr-3" href="{% url 'profile register' %}" role="button"> Register</a>
+                    <a class="btn btn-secondary mr-3" href="{% url 'profile login' %}" role="button">Log In</a>
+                </div>
             {% endif %}
         </div>
-
-
     </div>
 
+    {# TODO: Reformat the template - use cards for the income and expenses, pie/bar chart for the income #}
+    {# TOTAL INCOME/EXPENSE#}
+    {% if user.is_authenticated %}
+        <div class="container" style="text-align:center;">
+            <div class="row justify-content-center">
+                <div class="col-sm">
+                    <table class="table table-responsive table-bordered">
+                        <thead class="table-secondary">
+                        <tr>
+                            <th scope="col">Total Income</th>
+                            <th scope="col">Total Expenses</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>{{ total_income|floatformat:2 }} lv</td>
+                            <td>{{ total_spent|floatformat:2 }} lv.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-sm">
+                    <table class="table table-responsive table-bordered">
+                        <thead class="table-secondary">
+                        <tr>
+                            <th scope="col">Month</th>
+                            <th scope="col">Expenses</th>
+                            <th scope="col">Income</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for month in monthy_transactions %}
+                            <tr>
+                                <th scope="row">{{ month.month|date:"F" }}</th>
+                                <td>{{ month.total_expense }} lv.</td>
+                                <td>{{ month.total_income }} lv.</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <th scope="row">No data</th>
+                                <td>No data</td>
+                                <td>No data</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {# Pie chart #}
+    {% if user.is_authenticated %}
+        <div class="container">
+            <div class="row justify-content-center">
+
+                {#                <div class="col-sm">#}
+                {#                    <canvas id="bar-chart"></canvas>#}
+                {#                </div>#}
+                <div class="col-sm">
+                    <p style="text-align:center;">Income</p>
+                    <canvas id="bar-chart"></canvas>
+                </div>
+                <div class="col-sm">
+                    <p style="text-align:center;">Expenses</p>
+                    <canvas id="pie-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <script>
+
+        let config_pie = {
+            type: 'pie',
+            data: {
+                datasets: [{
+                    data: {{ data|safe }},
+                    backgroundColor: [
+                        '#F66D44', '#FEAE65', '#E6F69D', '#AADEA7', '#64C2A6', '#2D87BB', '#2D87BB', '#D52DB7', '#FF2E7E', '#FF2E7E', '#57167E'
+                    ],
+                    label: 'Category'
+                }],
+                labels: {{ labels|safe }}
+            },
+            options: {
+                responsive: true
+            }
+        };
+
+        {#let config_bar = {#}
+        {#    type: 'bar',#}
+        {#    data: {#}
+        {#        datasets: [{#}
+        {#            data: {{ expenses|safe }},#}
+        {#            backgroundColor: [#}
+        {#                '#F66D44', '#FEAE65', '#E6F69D', '#AADEA7', '#64C2A6', '#2D87BB', '#2D87BB', '#D52DB7', '#FF2E7E', '#FF2E7E', '#57167E'#}
+        {#            ],#}
+        {#            label: 'Category'#}
+        {#        }],#}
+        {#        labels: {{ months|safe }}#}
+        {#    },#}
+        {#    options: {#}
+        {#        barValueSpacing: 20,#}
+        {#        scales: {#}
+        {#            yAxes: [{#}
+        {#                ticks: {#}
+        {#                    min: 0,#}
+        {#                }#}
+        {#            }]#}
+        {#        }#}
+        {#    }#}
+        {# }#}
+
+        window.onload = function () {
+            let ctx_pie = document.getElementById('pie-chart').getContext('2d');
+            {#let ctx_bar = document.getElementById("bar-chart").getContext('2d');#}
+            window.myPie = new Chart(ctx_pie, config_pie);
+            {#window.myBar = new Chart(ctx_bar, config_bar);#}
+        };
+
+    </script>
 {% endblock %}
