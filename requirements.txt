@@ -6,3 +6,4 @@ login==0.0.6
 loginform==1.2.0
 lxml==4.8.0
 sqlparse==0.4.2
+whitenoise==6.0.0
