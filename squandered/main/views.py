@@ -13,31 +13,17 @@ class IndexView(views.TemplateView):
         expenses = Expense.objects.filter(user__id=self.request.user.id)
         incomes = Income.objects.filter(user__id=self.request.user.id)
 
-        expenses_per_month = expenses. \
+        context['monthly_transactions'] = expenses. \
             annotate(month=TruncMonth('date')). \
             values('month'). \
             annotate(total_expense=Sum('amount')). \
             order_by('date__month')
-
-        transactions = expenses_per_month
-
-        for t in transactions:
-            try:
-                t['total_income'] = incomes.filter(date__month=t['month'].month). \
-                    annotate(month=TruncMonth('date')). \
-                    values('month'). \
-                    annotate(total=Sum('amount'))[0]['total']
-            except IndexError:
-                t['total_income'] = 0
-        context['monthy_transactions'] = transactions
 
         context['spent_per_category'] = expenses. \
             values('category__name'). \
             annotate(total=Sum('amount'))
 
         context['income_per_category'] = incomes.values('category__name').annotate(total=Sum('amount'))
-
-        print(context['income_per_category'])
 
         total_spent = expenses.aggregate(Sum('amount'))
         total_spent = total_spent['amount__sum']

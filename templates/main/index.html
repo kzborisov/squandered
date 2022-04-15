@@ -20,8 +20,37 @@
         </div>
     </div>
 
-    {# TODO: Reformat the template - use cards for the income and expenses, pie/bar chart for the income #}
-    {# TOTAL INCOME/EXPENSE#}
+    {# Cards#}
+    {% if user.is_authenticated %}
+        <div class="container" style="text-align:center;">
+            <div class="row justify-content-center">
+                <div class="col-sm">
+                    <div class="card" style="width: 18rem; margin: 0 auto;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ total_income|floatformat:2 }} lv.</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Total income for the year</h6>
+                            <p class="card-text"></p>
+                            {#                            <a href="#" class="card-link">Card link</a>#}
+                        </div>
+                    </div>
+                    <canvas id="pie-chart-income"></canvas>
+                </div>
+                <div class="col-sm">
+                    <div class="card" style="width: 18rem; margin: 0 auto;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ total_spent|floatformat:2 }} lv.</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Total Expenses for the year</h6>
+                            <p class="card-text"></p>
+                            {#                            <a href="#" class="card-link">Card link</a>#}
+                        </div>
+                    </div>
+                    <canvas id="pie-chart-expense"></canvas>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {# TOTAL INCOME/EXPENSE PER MONTH #}
     {% if user.is_authenticated %}
         <div class="container" style="text-align:center;">
             <div class="row justify-content-center">
@@ -29,63 +58,24 @@
                     <table class="table table-responsive table-bordered">
                         <thead class="table-secondary">
                         <tr>
-                            <th scope="col">Total Income</th>
-                            <th scope="col">Total Expenses</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>{{ total_income|floatformat:2 }} lv</td>
-                            <td>{{ total_spent|floatformat:2 }} lv.</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="col-sm">
-                    <table class="table table-responsive table-bordered">
-                        <thead class="table-secondary">
-                        <tr>
                             <th scope="col">Month</th>
                             <th scope="col">Expenses</th>
-                            <th scope="col">Income</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {% for month in monthy_transactions %}
+                        {% for month in monthly_transactions %}
                             <tr>
                                 <th scope="row">{{ month.month|date:"F" }}</th>
                                 <td>{{ month.total_expense }} lv.</td>
-                                <td>{{ month.total_income }} lv.</td>
                             </tr>
                         {% empty %}
                             <tr>
                                 <th scope="row">No data</th>
                                 <td>No data</td>
-                                <td>No data</td>
                             </tr>
                         {% endfor %}
                         </tbody>
                     </table>
-                </div>
-            </div>
-        </div>
-    {% endif %}
-
-    {# Pie chart #}
-    {% if user.is_authenticated %}
-        <div class="container">
-            <div class="row justify-content-center">
-
-                {#                <div class="col-sm">#}
-                {#                    <canvas id="bar-chart"></canvas>#}
-                {#                </div>#}
-                <div class="col-sm">
-                    <p style="text-align:center;">Yearly Income</p>
-                    <canvas id="pie-chart-income"></canvas>
-                </div>
-                <div class="col-sm">
-                    <p style="text-align:center;">Yearly Expenses</p>
-                    <canvas id="pie-chart-expense"></canvas>
                 </div>
             </div>
         </div>
