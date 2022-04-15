@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load month_name %}
+
+{% block content %}
+    <div class="container mt-5" style="text-align:center;">
+        <div class="row justify-content-center">
+            <div class="col-sm">
+                <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+                    <div class="card-header">Income</div>
+                    <div class="card-body">
+                        {% if total_income.amount__sum %}
+                            <h5 class="card-title">{{ total_income.amount__sum|floatformat:2 }} lv.</h5>
+                        {% else %}
+                            <h5 class="card-title">No data</h5>
+                        {% endif %}
+                        <p class="card-text">Income for {{ month|month_name }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="card bg-light mb-3" style="max-width: 18rem;">
+                    <div class="card-header">Balance</div>
+                    <div class="card-body">
+                        {% if balance %}
+                            <h5 class="card-title">{{ balance|floatformat:2 }} lv.</h5>
+                        {% else %}
+                            <h5 class="card-title">No data</h5>
+                        {% endif %}
+                        <p class="card-text">Money left for {{ month|month_name }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+                    <div class="card-header">Expenses</div>
+                    <div class="card-body">
+                        {% if total_expense.amount__sum %}
+                            <h5 class="card-title">{{ total_expense.amount__sum|floatformat:2 }} lv.</h5>
+                        {% else %}
+                            <h5 class="card-title">No data</h5>
+                        {% endif %}
+                        <p class="card-text">Expenses for {{ month|month_name }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5" style="text-align:center;">
+        <div class="row justify-content-center">
+            <div class="col-sm">
+                <h4 class="display-4">Income</h4>
+                <table id="sortable-income" class="table table-striped table-responsive table-bordered"
+                       style="min-height:30vh;">
+                    <thead class="table-secondary">
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Amount (BGN)</th>
+                        <th scope="col">Description</th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for income in incomes %}
+                        <tr>
+                            <td>{{ income.name }}</td>
+                            <td>{{ income.category.name }}</td>
+                            <td>{{ income.date }}</td>
+                            <td>{{ income.amount }}</td>
+                            {% if income.description %}
+                                <td>{{ income.description }}</td>
+                            {% else %}
+                                <td>No description</td>
+                            {% endif %}
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td>No data</td>
+                            <td>No data</td>
+                            <td>No data</td>
+                            <td>No data</td>
+                            <td>No data</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm">
+                <h4 class="display-4">Expenses</h4>
+                <table id="sortable-expenses" class="table table-striped table-responsive table-bordered"
+                       style="min-height:30vh;">
+                    <thead class="table-secondary">
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Amount (BGN)</th>
+                        <th scope="col">Description</th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for expense in expenses %}
+                        <tr>
+                            <td>{{ expense.name }}</td>
+                            <td>{{ expense.category.name }}</td>
+                            <td>{{ expense.date }}</td>
+                            <td>{{ expense.amount }}</td>
+                            {% if expense.description %}
+                                <td>{{ expense.description }}</td>
+                            {% else %}
+                                <td>No description</td>
+
+                            {% endif %}
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td>No data</td>
+                            <td>No data</td>
+                            <td>No data</td>
+                            <td>No data</td>
+                            <td>No data</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.11.5/datatables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#sortable-income').DataTable({
+                "order": [[2, "asc"]]
+            });
+            $('#sortable-expenses').DataTable({
+                "order": [[2, "asc"]]
+            });
+        });
+    </script>
+{% endblock %}

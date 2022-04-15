@@ -8,8 +8,8 @@
             {% if user.is_authenticated %}
                 <p class="lead">It's good to see you back, {{ user.profile.first_name }}</p>
                 <div class="flex-box flex-row justify-content-center">
-                    <a class="btn btn-secondary mr-3" href="{% url 'add income' %}">Add Income</a>
-                    <a class="btn btn-secondary mr-3" href="{% url 'add expense' %}" role="button">Add Expense</a>
+                    <a class="btn btn-success mr-3" href="{% url 'add income' %}">Add Income</a>
+                    <a class="btn btn-danger mr-3" href="{% url 'add expense' %}" role="button">Add Expense</a>
                 </div>
             {% else %}
                 <p class="lead">You should log in or register to use Squandered</p>
@@ -24,31 +24,48 @@
     {# Cards#}
     {% if user.is_authenticated %}
         <div class="container" style="text-align:center;">
-        <div class="row justify-content-center">
-            <div class="col-sm">
-                <div class="card" style="width: 18rem; margin: 0 auto;">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ total_income|floatformat:2 }} lv.</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">Total income for the year</h6>
-                        <p class="card-text"></p>
-                        <a href="{% url 'income details' %}" class="card-link">View Income</a>
+            <div class="row justify-content-center">
+                <div class="col-sm">
+                    <div class="card" style="width: 18rem; margin: 0 auto;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ total_income|floatformat:2 }} lv.</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Total income for the year</h6>
+                            <p class="card-text"></p>
+                            <a href="{% url 'income details' %}" class="card-link">View Income</a>
+                        </div>
                     </div>
-                </div>
-                <canvas id="pie-chart-income"></canvas>
+                    <canvas id="pie-chart-income"></canvas>
 
-            </div>
-            <div class="col-sm">
-                <div class="card" style="width: 18rem; margin: 0 auto;">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ total_spent|floatformat:2 }} lv.</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">Total Expenses for the year</h6>
-                        <p class="card-text"></p>
-                        <a href="{% url 'expenses details' %}" class="card-link">View Expenses</a>
+                </div>
+                <div class="col-sm">
+                    <select class="form-select" aria-label="month-select" id="month-select">
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                    <button type="button" id="btn-month-select" class="btn btn-secondary mt-4">Details</button>
+                </div>
+                <div class="col-sm">
+                    <div class="card" style="width: 18rem; margin: 0 auto;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ total_spent|floatformat:2 }} lv.</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Total Expenses for the year</h6>
+                            <p class="card-text"></p>
+                            <a href="{% url 'expenses details' %}" class="card-link">View Expenses</a>
+                        </div>
                     </div>
+                    <canvas id="pie-chart-expense"></canvas>
                 </div>
-                <canvas id="pie-chart-expense"></canvas>
             </div>
-
         </div>
     {% endif %}
 
@@ -85,7 +102,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
     <script>
-
         let config_expense = {
             type: 'pie',
             data: {
@@ -127,5 +143,9 @@
             window.myBar = new Chart(ctx_income, config_income);
         };
 
+        $(document).on('click', '#btn-month-select', function () {
+            let selected = $('#month-select option:selected').val();
+            window.location = "{% url 'transaction details per month' 1 %}".replace(/1/, selected);
+        });
     </script>
 {% endblock %}
