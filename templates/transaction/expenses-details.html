@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="container mt-5" style="text-align:center;">
+        <div class="flex-box flex-row justify-content-center mb-5">
+            <a href="{% url 'index' %}" class="btn btn-secondary">Go Back</a>
+            <a href="{% url 'add expense' %}" class="btn btn-secondary">Add Expense</a>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-sm">
+                <table id="sortable-expenses" class="table table-responsive table-bordered">
+                    <thead class="table-secondary">
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Amount (BGN)</th>
+                        <th scope="col">Description</th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for expense in expenses %}
+                        <tr>
+                            <td>{{ expense.name }}</td>
+                            <td>{{ expense.category.name }}</td>
+                            <td>{{ expense.date }}</td>
+                            <td>{{ expense.amount }}</td>
+                            {% if expense.description %}
+                                <td>{{ expense.description }}</td>
+                            {% else %}
+                                <td>No description</td>
+
+                            {% endif %}
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td>No data</td>
+                            <td>No data</td>
+                            <td>No data</td>
+                            <td>No data</td>
+                            <td>No data</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.11.5/datatables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#sortable-expenses').DataTable( {
+                "order": [[ 2, "asc" ]]
+            });
+        });
+    </script>
+{% endblock %}

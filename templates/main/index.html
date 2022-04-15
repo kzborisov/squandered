@@ -1,14 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    {# Heading #}
     <div class="jumbotron jumbotron-fluid my-5">
         <div class="position-sticky d-flex flex-column align-items-center">
             <h1 class="display-xs">Welcome to Squandered</h1>
             {% if user.is_authenticated %}
                 <p class="lead">It's good to see you back, {{ user.profile.first_name }}</p>
                 <div class="flex-box flex-row justify-content-center">
-                    <a class="btn btn-secondary mr-3" href="{% url 'add expense' %}" role="button">Add Expense</a>
                     <a class="btn btn-secondary mr-3" href="{% url 'add income' %}">Add Income</a>
+                    <a class="btn btn-secondary mr-3" href="{% url 'add expense' %}" role="button">Add Expense</a>
                 </div>
             {% else %}
                 <p class="lead">You should log in or register to use Squandered</p>
@@ -30,7 +31,7 @@
                         <h5 class="card-title">{{ total_income|floatformat:2 }} lv.</h5>
                         <h6 class="card-subtitle mb-2 text-muted">Total income for the year</h6>
                         <p class="card-text"></p>
-                        <a href="#" class="card-link">View Income</a>
+                        <a href="{% url 'income details' %}" class="card-link">View Income</a>
                     </div>
                 </div>
                 <canvas id="pie-chart-income"></canvas>
@@ -42,7 +43,7 @@
                         <h5 class="card-title">{{ total_spent|floatformat:2 }} lv.</h5>
                         <h6 class="card-subtitle mb-2 text-muted">Total Expenses for the year</h6>
                         <p class="card-text"></p>
-                        <a href="#" class="card-link">View Expenses</a>
+                        <a href="{% url 'expenses details' %}" class="card-link">View Expenses</a>
                     </div>
                 </div>
                 <canvas id="pie-chart-expense"></canvas>
