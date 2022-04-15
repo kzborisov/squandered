@@ -1,24 +1,131 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="jumbotron jumbotron-fluid mt-5" style="height: 50vh;">
+    {# Heading #}
+    <div class="jumbotron jumbotron-fluid my-5">
         <div class="position-sticky d-flex flex-column align-items-center">
-            <h1 class="display-4">Welcome to Squandered</h1>
-
+            <h1 class="display-xs">Welcome to Squandered</h1>
             {% if user.is_authenticated %}
                 <p class="lead">It's good to see you back, {{ user.profile.first_name }}</p>
-                <a class="btn btn-secondary" href="#" role="button">Add Transaction</a>
-            {% else %}
-                <p class="lead">You should login or register</p>
                 <div class="flex-box flex-row justify-content-center">
-                    <a class="btn btn-secondary mr-1" href="{% url 'profile register' %}" role="button"> Register</a>
-                    <a class="btn btn-secondary" href="{% url 'profile login' %}" role="button">Log In</a>
+                    <a class="btn btn-secondary mr-3" href="{% url 'add income' %}">Add Income</a>
+                    <a class="btn btn-secondary mr-3" href="{% url 'add expense' %}" role="button">Add Expense</a>
                 </div>
-
+            {% else %}
+                <p class="lead">You should log in or register to use Squandered</p>
+                <div class="flex-box flex-row justify-content-center">
+                    <a class="btn btn-secondary mr-3" href="{% url 'profile register' %}" role="button"> Register</a>
+                    <a class="btn btn-secondary mr-3" href="{% url 'profile login' %}" role="button">Log In</a>
+                </div>
             {% endif %}
         </div>
-
-
     </div>
 
+    {# Cards#}
+    {% if user.is_authenticated %}
+        <div class="container" style="text-align:center;">
+        <div class="row justify-content-center">
+            <div class="col-sm">
+                <div class="card" style="width: 18rem; margin: 0 auto;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ total_income|floatformat:2 }} lv.</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Total income for the year</h6>
+                        <p class="card-text"></p>
+                        <a href="{% url 'income details' %}" class="card-link">View Income</a>
+                    </div>
+                </div>
+                <canvas id="pie-chart-income"></canvas>
+
+            </div>
+            <div class="col-sm">
+                <div class="card" style="width: 18rem; margin: 0 auto;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ total_spent|floatformat:2 }} lv.</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Total Expenses for the year</h6>
+                        <p class="card-text"></p>
+                        <a href="{% url 'expenses details' %}" class="card-link">View Expenses</a>
+                    </div>
+                </div>
+                <canvas id="pie-chart-expense"></canvas>
+            </div>
+
+        </div>
+    {% endif %}
+
+    {# TOTAL INCOME/EXPENSE PER MONTH #}
+    {% if user.is_authenticated %}
+        <div class="container mt-5" style="text-align:center;">
+            <div class="row justify-content-center">
+                <div class="col-sm">
+                    <table class="table table-responsive table-bordered">
+                        <thead class="table-secondary">
+                        <tr>
+                            <th scope="col">Month</th>
+                            <th scope="col">Expenses</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for month in monthly_transactions %}
+                            <tr>
+                                <th scope="row">{{ month.month|date:"F" }}</th>
+                                <td>{{ month.total_expense }} lv.</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <th scope="row">No data</th>
+                                <td>No data</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <script>
+
+        let config_expense = {
+            type: 'pie',
+            data: {
+                datasets: [{
+                    data: {{ total_expense_per_category|safe }},
+                    backgroundColor: [
+                        '#F66D44', '#FEAE65', '#E6F69D', '#AADEA7', '#64C2A6', '#2D87BB', '#2D87BB', '#D52DB7', '#FF2E7E', '#FF2E7E', '#57167E'
+                    ],
+                    label: 'Category'
+                }],
+                labels: {{ expense_categories|safe }}
+            },
+            options: {
+                responsive: true
+            }
+        };
+
+        let config_income = {
+            type: 'pie',
+            data: {
+                datasets: [{
+                    data: {{ total_income_per_category|safe }},
+                    backgroundColor: [
+                        '#F66D44', '#FEAE65', '#E6F69D', '#AADEA7', '#64C2A6', '#2D87BB', '#2D87BB', '#D52DB7', '#FF2E7E', '#FF2E7E', '#57167E'
+                    ],
+                    label: 'Category'
+                }],
+                labels: {{ income_categories|safe }}
+            },
+            options: {
+                responsive: true
+            }
+        };
+
+        window.onload = function () {
+            let ctx_expense = document.getElementById('pie-chart-expense').getContext('2d');
+            let ctx_income = document.getElementById('pie-chart-income').getContext('2d');
+            window.myPie = new Chart(ctx_expense, config_expense);
+            window.myBar = new Chart(ctx_income, config_income);
+        };
+
+    </script>
 {% endblock %}
