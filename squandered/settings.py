@@ -1,15 +1,14 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# TODO: Add to .env
-SECRET_KEY = 'django-insecure-2+myt78&w#&bt)^v8@3cagu!wetdawvh5l+gr92k1bv#5vp^!h'
+SECRET_KEY = os.getenv('SECRET_KEY', 'purple-unicorn')
 
-# TODO: Add to .env
-DEBUG = True
+APP_ENVIRONMENT = os.environ.get('APP_ENVIRONMENT')
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# TODO: Add to .env
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1').split(' ')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -58,43 +57,55 @@ WSGI_APPLICATION = 'squandered.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-# TODO: Use PostgreSQL
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+DEFAULT_DATABASE_CONFIG = {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': BASE_DIR / 'db.sqlite3',
+}
+
+if APP_ENVIRONMENT == 'Production':
+    DEFAULT_DATABASE_CONFIG = {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
+
+DATABASES = {
+    'default': DEFAULT_DATABASE_CONFIG,
 }
 
 AUTH_PASSWORD_VALIDATORS = [
-    # TODO: Uncomment when done
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    # },
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    # },
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    # },
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    # },
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
 ]
 
 LANGUAGE_CODE = 'en-us'
 
-# TODO: Add to .env
-TIME_ZONE = 'Europe/Sofia'
+TIME_ZONE = os.getenv('TIMEZONE', 'Europe/Sofia')
 
 USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = (
-    BASE_DIR / 'static',
-)
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static'
+]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

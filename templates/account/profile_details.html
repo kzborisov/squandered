@@ -1,11 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h3>Profile Details</h3>
-    <p>{{ profile.first_name }}</p>
-    <p>{{ profile.last_name }}</p>
-    <p>{{ profile.user.username }}</p>
-    <p>{{ profile.user.email }}</p>
-    <p>{{ profile.user.date_joined }}</p>
-    <p>{{ profile.user.is_staff }}</p>
+    <div class="jumbotron jumbotron-fluid my-5">
+        <div class="position-sticky d-flex flex-column align-items-center">
+            <h3 class="display-xs">Profile Details</h3>
+            <div class="flex-box flex-row">
+                <p><u><b>Name:</b></u> {{ profile.first_name }} {{ profile.last_name }}</p>
+                <p><u><b>UserName:</b></u> {{ profile.user.username }}</p>
+                <p><u><b>Email:</b></u> {{ profile.user.email }}</p>
+                <p><u><b>Member Since:</b></u> {{ profile.user.date_joined }}</p>
+            </div>
+        </div>
+    </div>
 {% endblock %}

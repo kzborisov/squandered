@@ -31,7 +31,7 @@ class ProfileLoginView(auth_views.LoginView):
     form_class = ProfileLoginForm
 
     def get_success_url(self):
-        return reverse_lazy('profile details', kwargs={'pk': self.request.user.id})
+        return reverse_lazy('index')
 
 
 class ProfileLogoutView(auth_views.LogoutView):
