@@ -35,6 +35,10 @@ class IndexView(views.TemplateView):
             values('category__name'). \
             annotate(total=Sum('amount'))
 
+        context['income_per_category'] = incomes.values('category__name').annotate(total=Sum('amount'))
+
+        print(context['income_per_category'])
+
         total_spent = expenses.aggregate(Sum('amount'))
         total_spent = total_spent['amount__sum']
         context['total_spent'] = total_spent if total_spent else 0
@@ -43,23 +47,24 @@ class IndexView(views.TemplateView):
         total_income = total_income['amount__sum']
         context['total_income'] = total_income if total_income else 0
 
-        labels = []
-        data = []
+        expense_categories = []
+        total_expense_per_category = []
 
         for category in context['spent_per_category']:
-            labels.append(category['category__name'])
-            data.append(float(category['total']))
+            expense_categories.append(category['category__name'])
+            total_expense_per_category.append(float(category['total']))
 
-        months = []
-        expenses = []
-        income = []
-        for t in transactions:
-            months.append(t['month'].strftime("%B"))
-            expenses.append(float(t['total_expense']))
-            income.append(float(t['total_income']))
+        context['expense_categories'] = expense_categories
+        context['total_expense_per_category'] = total_expense_per_category
 
-        context['months'] = months
-        context['expenses'] = expenses
-        context['labels'] = labels
-        context['data'] = data
+        income_categories = []
+        total_income_per_category = []
+
+        for category in context['income_per_category']:
+            income_categories.append(category['category__name'])
+            total_income_per_category.append(float(category['total']))
+
+        context['income_categories'] = income_categories
+        context['total_income_per_category'] = total_income_per_category
+
         return context
