@@ -25,6 +25,19 @@
     {% if user.is_authenticated %}
         <div class="container" style="text-align:center;">
             <div class="row justify-content-center">
+                {# Expenses #}
+                <div class="col-sm">
+                    <div class="card" style="width: 18rem; margin: 0 auto;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ total_spent|floatformat:2 }} lv.</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Total Expenses for the year</h6>
+                            <p class="card-text"></p>
+                            <a href="{% url 'expenses details' %}" class="card-link">View Expenses</a>
+                        </div>
+                    </div>
+                    <canvas id="pie-chart-expense"></canvas>
+                </div>
+                {# Income #}
                 <div class="col-sm">
                     <div class="card" style="width: 18rem; margin: 0 auto;">
                         <div class="card-body">
@@ -35,9 +48,16 @@
                         </div>
                     </div>
                     <canvas id="pie-chart-income"></canvas>
-
                 </div>
-                <div class="col-sm">
+            </div>
+        </div>
+    {% endif %}
+
+    {# Details per month #}
+    {% if user.is_authenticated %}
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-3 d-flex align-items-cente" style="flex-direction: column;">
                     <select class="form-select" aria-label="month-select" id="month-select">
                         <option value="1">January</option>
                         <option value="2">February</option>
@@ -53,17 +73,6 @@
                         <option value="12">December</option>
                     </select>
                     <button type="button" id="btn-month-select" class="btn btn-secondary mt-4">Details</button>
-                </div>
-                <div class="col-sm">
-                    <div class="card" style="width: 18rem; margin: 0 auto;">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ total_spent|floatformat:2 }} lv.</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">Total Expenses for the year</h6>
-                            <p class="card-text"></p>
-                            <a href="{% url 'expenses details' %}" class="card-link">View Expenses</a>
-                        </div>
-                    </div>
-                    <canvas id="pie-chart-expense"></canvas>
                 </div>
             </div>
         </div>

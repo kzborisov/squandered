@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
 from django.http import Http404
@@ -66,12 +68,14 @@ class TransactionDetailsPerMonthView(LoginRequiredMixin, views.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        current_year = date.today().year
         incomes = Income.objects. \
             filter(user_id=self.request.user.id). \
-            filter(date__month=self.kwargs['month'])
+            filter(date__month=self.kwargs['month']).filter(date__year=current_year)
 
         total_expenses = self.get_queryset().values('amount').aggregate(Sum('amount'))
         total_income = incomes.values('amount').aggregate(Sum('amount'))
+        total_income['amount__sum'] = total_income['amount__sum'] if total_income['amount__sum'] else 0
 
         context['month'] = self.kwargs['month']
         context['incomes'] = incomes
@@ -79,6 +83,6 @@ class TransactionDetailsPerMonthView(LoginRequiredMixin, views.ListView):
         context['total_expense'] = total_expenses
         context['total_income'] = total_income
 
-        if total_expenses['amount__sum'] and total_expenses['amount__sum']:
-            context['balance'] = total_income['amount__sum'] - total_expenses['amount__sum']
+        context['balance'] = total_income['amount__sum'] - total_expenses['amount__sum']
+
         return context

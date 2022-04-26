@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth
 from django.views import generic as views
@@ -10,8 +12,9 @@ class IndexView(views.TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        expenses = Expense.objects.filter(user__id=self.request.user.id)
-        incomes = Income.objects.filter(user__id=self.request.user.id)
+        current_year = date.today().year
+        expenses = Expense.objects.filter(user__id=self.request.user.id).filter(date__year=current_year)
+        incomes = Income.objects.filter(user__id=self.request.user.id).filter(date__year=current_year)
 
         context['monthly_transactions'] = expenses. \
             annotate(month=TruncMonth('date')). \
