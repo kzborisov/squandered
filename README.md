@@ -1,2 +1,3 @@
 # squandered
+
 Money management tool
